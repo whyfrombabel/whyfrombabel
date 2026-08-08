@@ -14,13 +14,18 @@
   <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="%230f172a"/><circle cx="50" cy="36" r="18" fill="%23475569"/><ellipse cx="50" cy="74" rx="30" ry="16" fill="%23475569"/></svg>' type="image/svg+xml">
 
   <style>
-    :root{--bg:#0f172a;--card:rgba(30,41,59,0.7);--muted:#94a3b8;--text:#e2e8f0;--accent:#94a3b8;--border:rgba(148,163,184,0.15)}
-    [data-theme="light"]{--bg:#f8fafc;--card:rgba(255,255,255,0.85);--muted:#475569;--text:#0f172a;--accent:#475569;--border:rgba(71,85,105,0.08)}
+    :root{--bg:#0f172a;--card:rgba(30,41,59,0.7);--muted:#94a3b8;--text:#e2e8f0;--accent:#94a3b8;--cursor:148,163,184;--border:rgba(148,163,184,0.15)}
+    [data-theme="light"]{--bg:#f8fafc;--card:rgba(255,255,255,0.85);--muted:#475569;--text:#0f172a;--accent:#475569;--cursor:71,85,105;--border:rgba(71,85,105,0.08)}
     *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
     body{--mouse-x:50%;--mouse-y:50%;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,system-ui,-apple-system,sans-serif;line-height:1.5;min-height:100vh;display:flex;flex-direction:column;padding:0 1.25rem;position:relative;overflow-x:hidden;cursor:none}
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.42;background:radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(148,163,184,0.16), transparent 30%)}
-    #customCursor{position:fixed;top:0;left:0;width:16px;height:16px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) scale(1);background:rgba(148,163,184,0.85);box-shadow:0 0 0 4px rgba(148,163,184,0.18);transition:transform .15s ease,background .15s ease,opacity .18s ease;z-index:9999;opacity:0}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.42;background:radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(var(--cursor),0.16), transparent 30%)}
+    #customCursor{position:fixed;top:0;left:0;width:18px;height:18px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);background:rgba(var(--cursor),0.9);transition:background .15s ease,opacity .18s ease;z-index:9999;opacity:0;filter:url(#goo)}
     body.mouse-active #customCursor{opacity:1}
+    .cursor-trail{position:fixed;border-radius:50%;pointer-events:none;background:rgba(var(--cursor),0.7);z-index:9998;opacity:0;filter:url(#goo);mix-blend-mode:normal}
+    body.mouse-active .cursor-trail{opacity:1}
+    .cursor-trail-1{width:14px;height:14px}
+    .cursor-trail-2{width:10px;height:10px;background:rgba(var(--cursor),0.5)}
+    .cursor-trail-3{width:7px;height:7px;background:rgba(var(--cursor),0.35)}
     .wrapper{max-width:1100px;margin:0 auto;flex:1;display:flex;flex-direction:column}
     .navbar{display:flex;justify-content:flex-end;align-items:center;padding:1.8rem 0 1.2rem;border-bottom:1px solid var(--border);gap:1rem}
     .avatar-link{display:flex;align-items:center;justify-content:center;margin-right:auto}
@@ -138,6 +143,16 @@
   </style>
 </head>
 <body>
+  <!-- SVG goo filter for liquid cursor -->
+  <svg style="position:absolute;width:0;height:0" aria-hidden="true">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"/>
+        <feBlend in="SourceGraphic" in2="goo"/>
+      </filter>
+    </defs>
+  </svg>
   <div class="wrapper">
     <header class="navbar" role="banner">
       <a href="#" class="avatar-link" id="homeAvatarLink" title="回到主页">
@@ -448,7 +463,41 @@
     (function initTheme(){const saved=localStorage.getItem(THEME_KEY);if(saved)setTheme(saved);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)setTheme('light');else setTheme('dark')})();
 
     const cursorEl = document.createElement('div');cursorEl.id='customCursor';document.body.appendChild(cursorEl);
-    document.addEventListener('mousemove',e=>{const x=Math.round((e.clientX/window.innerWidth)*100);const y=Math.round((e.clientY/window.innerHeight)*100);document.body.style.setProperty('--mouse-x', x+'%');document.body.style.setProperty('--mouse-y', y+'%');cursorEl.style.left=`${e.clientX}px`;cursorEl.style.top=`${e.clientY}px`;document.body.classList.add('mouse-active');
+    // Create liquid trailing blobs
+    const trailEls = [];
+    const trailConfigs = [
+      {cls:'cursor-trail-1', ease:0.18},
+      {cls:'cursor-trail-2', ease:0.12},
+      {cls:'cursor-trail-3', ease:0.07}
+    ];
+    trailConfigs.forEach(cfg=>{
+      const el = document.createElement('div');
+      el.className = `cursor-trail ${cfg.cls}`;
+      document.body.appendChild(el);
+      trailEls.push({el, x:0, y:0, ease:cfg.ease});
+    });
+    let mouseX=0, mouseY=0, prevMouseX=0, prevMouseY=0;
+    function animateCursor(){
+      // Velocity for squash/stretch
+      const vx = mouseX - prevMouseX;
+      const vy = mouseY - prevMouseY;
+      const speed = Math.sqrt(vx*vx + vy*vy);
+      const angle = Math.atan2(vy, vx) * 180 / Math.PI;
+      const stretch = Math.min(1 + speed * 0.02, 1.6);
+      const squash = 1 / Math.sqrt(stretch);
+      cursorEl.style.transform = `translate(-50%,-50%) rotate(${angle}deg) scaleX(${stretch}) scaleY(${squash})`;
+      // Animate trailing blobs with spring physics
+      trailEls.forEach((t,i)=>{
+        t.x += (mouseX - t.x) * t.ease;
+        t.y += (mouseY - t.y) * t.ease;
+        t.el.style.left = t.x + 'px';
+        t.el.style.top = t.y + 'px';
+      });
+      prevMouseX = mouseX; prevMouseY = mouseY;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.addEventListener('mousemove',e=>{const x=Math.round((e.clientX/window.innerWidth)*100);const y=Math.round((e.clientY/window.innerHeight)*100);document.body.style.setProperty('--mouse-x', x+'%');document.body.style.setProperty('--mouse-y', y+'%');cursorEl.style.left=`${e.clientX}px`;cursorEl.style.top=`${e.clientY}px`;document.body.classList.add('mouse-active');mouseX=e.clientX;mouseY=e.clientY;
       if(initialMouseY===null) initialMouseY=e.clientY;
       if(!photoAreaRevealed && e.clientY > initialMouseY + 24) revealPhotoPanel();
       lastMouseY=e.clientY;
@@ -603,7 +652,7 @@
     function savePhoto(data){if(data) localStorage.setItem(PHOTO_KEY,data);else localStorage.removeItem(PHOTO_KEY)}
     function renderPhoto(){if(!photoPreview)return;const data=loadPhoto();if(data){photoPreview.style.backgroundImage=`url(${data})`;photoPreview.classList.add('has-photo');if(removePhotoButton)removePhotoButton.style.display='inline-flex'}else{photoPreview.style.backgroundImage='none';photoPreview.classList.remove('has-photo');if(removePhotoButton)removePhotoButton.style.display='none'}}
     if(photoPreview){photoPreview.addEventListener('click',()=>{const current=loadPhoto();const promptText=(window._T && window._T.photo_prompt) || '请输入上传密码：';const password=prompt(promptText);if(password===null)return;if(password!==PHOTO_PASSWORD){alert((window._T && window._T.photo_wrong_alert) || '密码错误，无法上传。');return;} if(photoInput)photoInput.click();})}
-    if(photoInput){photoInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return; if(!file.type.startsWith('image/')){alert((window._T && window._T.photo_type_alert) || '请选择图片文件。');photoInput.value='';return;} if(file.size>2500000){alert((window._T && window._T.photo_size_alert) || '图片大小请小于 2.5MB。');photoInput.value='';return;} const reader=new FileReader();reader.onload=()=>{savePhoto(reader.result);renderPhoto()};reader.readAsDataURL(file)});}
+    if(photoInput){photoInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return; if(!file.type.startsWith('image/')){alert((window._T && window._T.photo_type_alert) || '请选择图片文件。');photoInput.value='';return;} if(file.size>2500000){alert((window._T && window._T.photo_size_alert) || '图片大小请小于 2.5MB。');photoInput.value='';return;} const reader=new FileReader();reader.onload=()=>{savePhoto(reader.result);renderPhoto()};reader.readAsDataURL(file);})}
     if(removePhotoButton){removePhotoButton.addEventListener('click',()=>{savePhoto('');if(photoInput)photoInput.value='';renderPhoto()})}
     renderPhoto();
     function loadMessages(){try{return JSON.parse(localStorage.getItem(MKEY)||'[]')}catch(e){return[]}}
