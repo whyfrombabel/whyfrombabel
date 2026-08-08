@@ -57,12 +57,12 @@
     .photo-panel.collapsed-photo{opacity:0;pointer-events:none;transform:translateY(16px);max-height:0;overflow:hidden}
     .photo-panel.visible-photo{opacity:1;pointer-events:auto;transform:translateY(0);max-height:800px}
     .circle-item:hover{box-shadow:0 22px 40px rgba(56,189,248,0.18);transform:translate(calc(-50% + var(--tx,0)), calc(-50% + var(--ty,0))) scale(1.03)}
-    .circle-item.selected{z-index:5;opacity:1;transform:translate(calc(-50% + var(--selected-x,220px)), calc(-50% + var(--selected-y,0))) scale(1.05);box-shadow:0 26px 56px rgba(56,189,248,0.24)}
-    .circle-item.dismiss-left{opacity:0;pointer-events:none;transform:translate(calc(-50% - 360px), calc(-50% + var(--ty,0))) scale(.25)}
-    .circle-item[data-section="articles"]{--tx:0;--ty:-170px}
-    .circle-item[data-section="music"]{--tx:170px;--ty:0}
-    .circle-item[data-section="work"]{--tx:0;--ty:170px}
-    .circle-item[data-section="messages"]{--tx:-170px;--ty:0}
+    .circle-item.selected{z-index:5;opacity:1;transform:translate(calc(-50% + var(--selected-x,0)), calc(-50% + var(--selected-y,0))) scale(1.05);box-shadow:0 26px 56px rgba(56,189,248,0.24)}
+    .circle-item.dismiss-away{opacity:0;pointer-events:none;transform:translate(calc(-50% + var(--dismiss-x,-360px)), calc(-50% + var(--dismiss-y,0))) scale(.25)}
+    .circle-item[data-section="articles"]{--tx:0;--ty:-170px;--selected-x:0;--selected-y:-220px;--dismiss-x:0;--dismiss-y:-360px}
+    .circle-item[data-section="music"]{--tx:170px;--ty:0;--selected-x:220px;--selected-y:0;--dismiss-x:360px;--dismiss-y:0}
+    .circle-item[data-section="work"]{--tx:0;--ty:170px;--selected-x:0;--selected-y:220px;--dismiss-x:0;--dismiss-y:360px}
+    .circle-item[data-section="messages"]{--tx:-170px;--ty:0;--selected-x:-220px;--selected-y:0;--dismiss-x:-360px;--dismiss-y:0}
     .circle-item:nth-child(1){transition-delay:.08s}
     .circle-item:nth-child(2){transition-delay:.14s}
     .circle-item:nth-child(3){transition-delay:.2s}
@@ -291,7 +291,7 @@
 
     function resetCircleAnimations(){
       circleItems.forEach(item=>{
-        item.classList.remove('selected','dismiss-left');
+        item.classList.remove('selected','dismiss-away');
         item.style.removeProperty('--selected-x');
         item.style.removeProperty('--selected-y');
       });
@@ -306,7 +306,7 @@
       resetCircleAnimations();
       circleHub.classList.add('animating');
       item.classList.add('selected');
-      circleItems.forEach(el=>{if(el!==item) el.classList.add('dismiss-left');});
+      circleItems.forEach(el=>{if(el!==item) el.classList.add('dismiss-away');});
       setTimeout(()=>{
         resetCircleAnimations();
         setCircleHubState(false);
