@@ -42,8 +42,30 @@
     .photo-preview.has-photo{border-color:rgba(71,85,105,0.25);color:transparent}
     .photo-upload{display:flex;flex-direction:column;gap:.65rem;align-items:flex-start}
     #photoInput{display:none}
-    #removePhoto{display:none;align-self:flex-start;padding:.55rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.04);color:var(--text);cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
-    #removePhoto:hover{transform:translateY(-1px);background:rgba(255,255,255,0.08)}
+    #removePhoto{display:none;align-self:flex-start;padding:.55rem .7rem;font-size:1rem;line-height:1;border-radius:50%;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.08);color:var(--text);cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s;min-width:42px;min-height:42px;display:inline-flex;align-items:center;justify-content:center}
+    #removePhoto:hover{transform:translateY(-1px);background:rgba(255,255,255,0.14)}
+    .circle-hub{position:relative;display:flex;align-items:center;justify-content:center;min-height:420px;margin:0 0 1.2rem;padding:1.4rem;}
+    .circle-core{position:relative;width:160px;height:160px;border-radius:50%;border:1px solid rgba(148,163,184,0.3);background:rgba(255,255,255,0.08);box-shadow:0 24px 64px rgba(15,23,42,0.18),inset 0 0 0 1px rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .35s ease,box-shadow .35s ease,background .35s ease}
+    .circle-core:hover{transform:scale(1.03);box-shadow:0 30px 72px rgba(56,189,248,0.18),0 0 0 1px rgba(56,189,248,0.16)}
+    .circle-core::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 12px rgba(56,189,248,0.08);pointer-events:none}
+    .circle-items{position:absolute;inset:0;pointer-events:none}
+    .circle-hub.open .circle-items{pointer-events:auto}
+    .circle-item{position:absolute;width:120px;height:120px;border-radius:50%;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.9);color:var(--text);display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;font-size:.95rem;font-weight:600;line-height:1.2;cursor:pointer;transition:transform .35s ease,opacity .35s ease,box-shadow .35s ease;opacity:0;transform:translate(-50%,-50%) scale(0.55);pointer-events:none;backdrop-filter:blur(16px)}
+    .circle-hub.open .circle-item{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+    .circle-item:hover{box-shadow:0 22px 40px rgba(56,189,248,0.18);transform:translate(-50%,-50%) scale(1.03)}
+    .circle-item[data-section="articles"]{top:10%;left:50%}
+    .circle-item[data-section="music"]{top:28%;right:10%}
+    .circle-item[data-section="work"]{bottom:16%;right:18%}
+    .circle-item[data-section="messages"]{bottom:20%;left:16%}
+    .circle-item:nth-child(1){transition-delay:.08s}
+    .circle-item:nth-child(2){transition-delay:.14s}
+    .circle-item:nth-child(3){transition-delay:.2s}
+    .circle-item:nth-child(4){transition-delay:.26s}
+    .circle-exit{display:none;position:fixed;top:1.2rem;left:1.2rem;width:48px;height:48px;border-radius:50%;border:1px solid rgba(148,163,184,0.28);background:rgba(15,23,42,0.9);color:var(--text);cursor:pointer;align-items:center;justify-content:center;display:inline-flex;font-size:1.1rem;box-shadow:0 18px 38px rgba(0,0,0,0.18);transition:transform .2s,background .2s,opacity .25s ease}
+    .circle-exit.visible{display:inline-flex;opacity:1}
+    .circle-exit.hide{opacity:0}
+    .circle-exit:hover{transform:translateY(-1px);background:rgba(255,255,255,0.08)}
+    .section-exit{opacity:0;transform:translateY(18px) scale(0.98);transition:opacity .25s ease,transform .25s ease}
     .details-grid{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1rem;border-top:1px solid rgba(148,163,184,0.12);padding-top:1rem}
     .detail-item{display:flex;flex-direction:column}
     .detail-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -102,11 +124,6 @@
       </a>
 
       <nav class="nav-menu" id="mainMenu" role="navigation" aria-label="主导航">
-        <a href="#" class="nav-item" data-section="home">主页</a>
-        <a href="#" class="nav-item" data-section="articles">文章分享</a>
-        <a href="#" class="nav-item" data-section="music">音乐推荐</a>
-        <a href="#" class="nav-item" data-section="work">工作相关</a>
-        <a href="#" class="nav-item message-link" data-section="messages">私信</a>
         <button id="themeToggle" class="nav-item" aria-pressed="false" title="切换深色/浅色主题">主题</button>
       </nav>
       <div class="lang-wrap">
@@ -128,11 +145,28 @@
           <span class="title-badge">玩家</span>
           <p class="bio">栖身于冷冽与理性之间，探索交互的边界。</p>
 
+          <div class="circle-hub" id="circleHub" aria-label="栏目导航">
+            <button type="button" id="hubAvatar" class="circle-core" aria-expanded="false" aria-label="点击展开栏目导航" title="点击展开栏目导航">
+              <!-- Inline SVG avatar -->
+              <svg class="avatar-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="用户头像">
+                <rect width="100" height="100" rx="50" fill="#0f172a" />
+                <circle cx="50" cy="36" r="18" fill="#475569" />
+                <ellipse cx="50" cy="74" rx="30" ry="16" fill="#475569" />
+              </svg>
+            </button>
+            <div class="circle-items" aria-hidden="true">
+              <button type="button" class="circle-item" data-section="articles" aria-label="文章分享">文章分享</button>
+              <button type="button" class="circle-item" data-section="music" aria-label="音乐推荐">音乐推荐</button>
+              <button type="button" class="circle-item" data-section="work" aria-label="工作相关">工作相关</button>
+              <button type="button" class="circle-item" data-section="messages" aria-label="私信">私信</button>
+            </div>
+          </div>
+
           <div class="photo-panel">
             <div id="photoPreview" class="photo-preview" aria-label="个人照片预览"></div>
             <div class="photo-upload">
               <input id="photoInput" type="file" accept="image/*">
-              <button type="button" id="removePhoto">删除照片</button>
+              <button type="button" id="removePhoto" aria-label="删除照片" title="删除照片">🗑</button>
             </div>
           </div>
 
@@ -158,6 +192,8 @@
           </div>
         </div>
       </section>
+
+      <button type="button" id="exitSection" class="circle-exit" aria-label="返回首页" title="返回首页">←</button>
 
       <section id="articlesSection" class="placeholder-content hidden-section visible-section" aria-hidden="true">
         <h2>📄 文章分享</h2>
@@ -220,13 +256,23 @@
   <script>
   (function(){
     const sections=['home','articles','music','work','messages'];
-    const menuLinks=document.querySelectorAll('.nav-item');
+    const menuLinks=document.querySelectorAll('.nav-item[data-section]');
     const avatar=document.getElementById('homeAvatarLink');
-    function hideAll(){sections.forEach(s=>{const el=document.getElementById(s+'Section');if(el){el.classList.add('hidden-section');el.setAttribute('aria-hidden','true')}})}
-    function show(section){hideAll();const el=document.getElementById(section+'Section');if(el){el.classList.remove('hidden-section');el.classList.add('visible-section');requestAnimationFrame(()=>el.classList.add('show-active'));el.setAttribute('aria-hidden','false')}menuLinks.forEach(l=>l.classList.toggle('home-link-active',l.dataset.section===section))}
+    const hubAvatar=document.getElementById('hubAvatar');
+    const circleHub=document.getElementById('circleHub');
+    const circleItems=document.querySelectorAll('.circle-item');
+    const exitButton=document.getElementById('exitSection');
+    function hideAll(){sections.forEach(s=>{const el=document.getElementById(s+'Section');if(el){el.classList.add('hidden-section');el.setAttribute('aria-hidden','true');el.classList.remove('show-active');el.classList.add('section-exit')}})}
+    function show(section){hideAll();const el=document.getElementById(section+'Section');if(el){el.classList.remove('hidden-section');el.classList.add('visible-section');requestAnimationFrame(()=>el.classList.add('show-active'));el.setAttribute('aria-hidden','false');el.classList.remove('section-exit')}menuLinks.forEach(l=>l.classList.toggle('home-link-active',l.dataset.section===section));
+      circleHub.classList.toggle('open', section==='home');
+      if(exitButton){if(section==='home'){exitButton.classList.remove('visible');exitButton.classList.add('hide')}else{exitButton.classList.add('visible');exitButton.classList.remove('hide')}}
+    }
     function navigate(section,push=true){if(!sections.includes(section))section='home';show(section);if(push)history.pushState({section},'',section==='home'?'/':`#${section}`)}
     menuLinks.forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const sec=link.dataset.section||'home';navigate(sec)})});
     avatar.addEventListener('click',e=>{e.preventDefault();navigate('home')});
+    if(hubAvatar){hubAvatar.addEventListener('click',()=>{circleHub.classList.toggle('open');const expanded=circleHub.classList.contains('open');hubAvatar.setAttribute('aria-expanded',String(expanded));circleHub.querySelector('.circle-items').setAttribute('aria-hidden',String(!expanded))})}
+    circleItems.forEach(item=>{item.addEventListener('click',()=>{const section=item.dataset.section||'home';circleHub.classList.remove('open');if(hubAvatar)hubAvatar.setAttribute('aria-expanded','false');navigate(section)})});
+    if(exitButton){exitButton.addEventListener('click',()=>{navigate('home')})}
     window.addEventListener('popstate',e=>{const state=(e.state&&e.state.section)||location.hash.replace('#','')||'home';show(state)});
     const themeToggle=document.getElementById('themeToggle');const root=document.documentElement;const THEME_KEY='site-theme';
     function setTheme(t){if(t==='light')root.setAttribute('data-theme','light');else root.removeAttribute('data-theme');themeToggle.setAttribute('aria-pressed',String(t==='light'));localStorage.setItem(THEME_KEY,t)}
@@ -337,7 +383,6 @@
       const photoLabel = document.getElementById('photoLabel'); if(photoLabel) photoLabel.textContent = dict.photo_label;
       const removePhotoBtn = document.getElementById('removePhoto'); if(removePhotoBtn) removePhotoBtn.textContent = dict.photo_remove;
       const photoNote = document.getElementById('photoNote'); if(photoNote) photoNote.textContent = dict.photo_note;
-      const photoPrev = document.getElementById('photoPreview'); if(photoPrev && !photoPrev.classList.contains('has-photo')) photoPrev.textContent = dict.photo_empty;
       // update messages list text if empty
       const msgs = loadMessages(); if(msgs.length===0){ const l = document.getElementById('messagesList'); if(l) l.innerHTML = `<li class="muted">${dict.no_messages}</li>` }
       // store and set select
