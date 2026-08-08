@@ -35,6 +35,15 @@
     .name{font-size:2.4rem;margin-bottom:.4rem;color:var(--text)}
     .title-badge{display:inline-block;background:#1e293b;color:#b9c7dd;padding:.25rem .8rem;border-radius:999px;font-size:.9rem;margin:0.4rem 0 1rem}
     .bio{font-size:1.05rem;color:var(--muted);margin:1rem 0 1.2rem;border-left:3px solid #475569;padding-left:1rem}
+    .photo-panel{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0 0;padding:1rem;border:1px solid rgba(148,163,184,0.12);border-radius:1rem;background:rgba(15,23,42,.68)}
+    .photo-preview{flex:1 1 180px;min-height:160px;border-radius:1rem;background:linear-gradient(135deg,rgba(71,85,105,.35),rgba(15,23,42,.95));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem;text-align:center;background-size:cover;background-position:center}
+    .photo-preview.has-photo{color:transparent}
+    .photo-upload{flex:1 1 220px;display:flex;flex-direction:column;gap:.65rem}
+    .file-input-label{font-size:.92rem;color:var(--text)}
+    #photoInput{padding:.6rem .8rem;border-radius:.6rem;border:1px solid rgba(71,85,105,0.15);background:rgba(255,255,255,.05);color:var(--text)}
+    #removePhoto{display:none;align-self:flex-start;padding:.55rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.04);color:var(--text);cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
+    #removePhoto:hover{transform:translateY(-1px);background:rgba(255,255,255,0.08)}
+    .photo-note{font-size:.82rem;color:var(--muted);line-height:1.4;margin-top:.2rem}
     .details-grid{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1rem;border-top:1px solid rgba(148,163,184,0.12);padding-top:1rem}
     .detail-item{display:flex;flex-direction:column}
     .detail-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -118,6 +127,16 @@
           <h1 id="homeTitle" class="name">WHY</h1>
           <span class="title-badge">玩家</span>
           <p class="bio">栖身于冷冽与理性之间，探索交互的边界。</p>
+
+          <div class="photo-panel">
+            <div id="photoPreview" class="photo-preview" aria-label="个人照片预览">个人照片</div>
+            <div class="photo-upload">
+              <label id="photoLabel" for="photoInput" class="file-input-label">上传个人图片（仅本人）</label>
+              <input id="photoInput" type="file" accept="image/*">
+              <button type="button" id="removePhoto">删除照片</button>
+              <div id="photoNote" class="photo-note">本图片仅保存在当前浏览器，不会同步给他人。</div>
+            </div>
+          </div>
 
           <div class="details-grid">
             <div class="detail-item">
@@ -232,6 +251,7 @@
         music_title_label: '曲目', music_artist_label: '艺人', music_url_label: '链接（可选）', music_note_label: '推荐理由 / 说明',
         music_title_placeholder: '歌曲名称', music_artist_placeholder: '歌手或乐队', music_url_placeholder: '音乐链接，例如 Spotify、YouTube', music_note_placeholder: '为什么想推荐这首歌？', music_submit: '发布推荐', music_empty: '暂无推荐，快来发布第一条音乐。', music_empty_alert: '请填写曲目和艺人', music_comment_placeholder: '写下你的讨论或推荐理由', music_comment_submit: '发表评论', music_no_comments: '暂无讨论，欢迎留言。', music_discussion_header: '讨论', music_comments_label: '条评论', music_comment_empty_alert: '请填写评论内容',
         msg_heading: '✉️ 私信 / 留言簿', name_label: '姓名', message_label: '留言', send: '发送', clear: '清空留言', no_messages: '暂无留言，快来发表第一个吧！',
+        photo_label: '上传个人图片（仅本人）', photo_remove: '删除照片', photo_note: '本图片仅保存在当前浏览器，不会同步给他人。', photo_empty: '个人照片', photo_type_alert: '请选择图片文件。', photo_size_alert: '图片大小请小于 2.5MB。',
         confirm_clear: '确定要删除所有留言吗？', empty_message_alert: '请填写留言内容', saved: '留言已保存。', deleted: '留言已删除。', cleared: '已清空留言'
       },
       'zh-TW': {
@@ -252,6 +272,7 @@
         music_title_label: 'Track', music_artist_label: 'Artist', music_url_label: 'Link (optional)', music_note_label: 'Recommendation notes',
         music_title_placeholder: 'Song title', music_artist_placeholder: 'Singer or band', music_url_placeholder: 'Music link such as Spotify or YouTube', music_note_placeholder: 'Why are you recommending this track?', music_submit: 'Publish', music_empty: 'No recommendations yet. Be the first to share!', music_empty_alert: 'Please enter a track and artist', music_comment_placeholder: 'Leave a discussion comment', music_comment_submit: 'Post comment', music_no_comments: 'No discussion yet — start the conversation.', music_discussion_header: 'Discussion', music_comments_label: 'comments', music_comment_empty_alert: 'Please enter a comment',
         msg_heading: '✉️ Messages / Guestbook', name_label: 'Name', message_label: 'Message', send: 'Send', clear: 'Clear', no_messages: 'No messages yet — be the first!',
+        photo_label: 'Upload photo (for owner only)', photo_remove: 'Remove photo', photo_note: 'This image is stored locally in this browser only and is not shared publicly.', photo_empty: 'Personal photo', photo_type_alert: 'Please choose an image file.', photo_size_alert: 'Please keep the image under 2.5MB.',
         confirm_clear: 'Are you sure you want to delete all messages?', empty_message_alert: 'Please enter a message', saved: 'Message saved.', deleted: 'Message deleted.', cleared: 'Messages cleared.'
       },
       'ja': {
@@ -262,6 +283,7 @@
         music_title_label: '曲名', music_artist_label: 'アーティスト', music_url_label: 'リンク（任意）', music_note_label: 'おすすめ理由 / 説明',
         music_title_placeholder: '曲名', music_artist_placeholder: '歌手またはバンド', music_url_placeholder: 'Spotify、YouTubeなどの音楽リンク', music_note_placeholder: 'おすすめしたい理由は？', music_submit: '投稿する', music_empty: 'まだおすすめはありません。ぜひ最初にシェアしてください！', music_empty_alert: '曲名とアーティストを入力してください', music_comment_placeholder: 'コメントを入力してください', music_comment_submit: 'コメントする', music_no_comments: 'まだ議論はありません。ぜひコメントしてください。', music_discussion_header: 'ディスカッション', music_comments_label: 'コメント', music_comment_empty_alert: 'コメントを入力してください',
         msg_heading: '✉️ メッセージ / ゲストブック', name_label: '名前', message_label: 'メッセージ', send: '送信', clear: 'クリア', no_messages: 'まだメッセージはありません。ぜひ最初の投稿を！',
+        photo_label: '個人画像をアップロード（本人のみ）', photo_remove: '写真を削除', photo_note: 'この画像は現在のブラウザにのみ保存され、公に共有されません。', photo_empty: '個人写真', photo_type_alert: '画像ファイルを選択してください。', photo_size_alert: '画像のサイズは2.5MB未満にしてください。',
         confirm_clear: '全てのメッセージを削除してもよろしいですか？', empty_message_alert: 'メッセージを入力してください', saved: 'メッセージを保存しました。', deleted: 'メッセージを削除しました。', cleared: 'メッセージを全て削除しました。'
       }
     };
@@ -314,6 +336,10 @@
       const musicUrlInput = document.getElementById('musicUrl'); if(musicUrlInput) musicUrlInput.placeholder = dict.music_url_placeholder;
       const musicNoteInput = document.getElementById('musicNote'); if(musicNoteInput) musicNoteInput.placeholder = dict.music_note_placeholder;
       const musicSubmitBtn = document.getElementById('submitMusic'); if(musicSubmitBtn) musicSubmitBtn.textContent = dict.music_submit;
+      const photoLabel = document.getElementById('photoLabel'); if(photoLabel) photoLabel.textContent = dict.photo_label;
+      const removePhotoBtn = document.getElementById('removePhoto'); if(removePhotoBtn) removePhotoBtn.textContent = dict.photo_remove;
+      const photoNote = document.getElementById('photoNote'); if(photoNote) photoNote.textContent = dict.photo_note;
+      const photoPrev = document.getElementById('photoPreview'); if(photoPrev && !photoPrev.classList.contains('has-photo')) photoPrev.textContent = dict.photo_empty;
       // update messages list text if empty
       const msgs = loadMessages(); if(msgs.length===0){ const l = document.getElementById('messagesList'); if(l) l.innerHTML = `<li class="muted">${dict.no_messages}</li>` }
       // store and set select
@@ -324,7 +350,7 @@
     }
 
     if(langSelect){
-      langSelect.addEventListener('change', (e)=>{ applyLang(e.target.value); renderMessages(); renderMusic(); });
+      langSelect.addEventListener('change', (e)=>{ applyLang(e.target.value); renderMessages(); renderMusic(); renderPhoto(); });
     }
     // initialize language
     applyLang(detectLang());
@@ -333,7 +359,12 @@
 
     const MKEY='guestbookMessages_v1';
     const MUSIC_KEY='musicRecommendations_v1';
+    const PHOTO_KEY='personalPhoto_v1';
     const form=document.getElementById('messageForm');
+    const photoInput=document.getElementById('photoInput');
+    const photoPreview=document.getElementById('photoPreview');
+    const removePhotoButton=document.getElementById('removePhoto');
+    const photoNoteElement=document.getElementById('photoNote');
     const nameInput=document.getElementById('guestName');
     const messageInput=document.getElementById('guestMessage');
     const list=document.getElementById('messagesList');
@@ -346,6 +377,12 @@
     const musicNote=document.getElementById('musicNote');
     const musicListEl=document.getElementById('musicList');
 
+    function loadPhoto(){return localStorage.getItem(PHOTO_KEY)||''}
+    function savePhoto(data){if(data) localStorage.setItem(PHOTO_KEY,data);else localStorage.removeItem(PHOTO_KEY)}
+    function renderPhoto(){if(!photoPreview)return;const data=loadPhoto();if(data){photoPreview.style.backgroundImage=`url(${data})`;photoPreview.textContent='';photoPreview.classList.add('has-photo');if(removePhotoButton)removePhotoButton.style.display='inline-flex'}else{photoPreview.style.backgroundImage='none';photoPreview.textContent=(window._T && window._T.photo_empty) || '个人照片';photoPreview.classList.remove('has-photo');if(removePhotoButton)removePhotoButton.style.display='none'}}
+    if(photoInput){photoInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return; if(!file.type.startsWith('image/')){alert((window._T && window._T.photo_type_alert) || '请选择图片文件。');photoInput.value='';return;} if(file.size>2500000){alert((window._T && window._T.photo_size_alert) || '图片大小请小于 2.5MB。');photoInput.value='';return;} const reader=new FileReader();reader.onload=()=>{savePhoto(reader.result);renderPhoto()};reader.readAsDataURL(file)});}
+    if(removePhotoButton){removePhotoButton.addEventListener('click',()=>{savePhoto('');if(photoInput)photoInput.value='';renderPhoto()})}
+    renderPhoto();
     function loadMessages(){try{return JSON.parse(localStorage.getItem(MKEY)||'[]')}catch(e){return[]}}
     function saveMessages(arr){localStorage.setItem(MKEY,JSON.stringify(arr))}
     function renderMessages(){list.innerHTML='';const msgs=loadMessages().slice().reverse();if(msgs.length===0){const emptyText=(window._T && window._T.no_messages) || '暂无留言，快来发表第一个吧！';list.innerHTML=`<li class="muted">${emptyText}</li>`;return}msgs.forEach(m=>{const li=document.createElement('li');li.className='message-card';const meta=document.createElement('div');meta.className='message-meta';const who=document.createElement('span');who.textContent=`${m.name||((window._T && window._T.name_label) || '匿名')}`;const when=document.createElement('span');when.textContent=new Date(m.time).toLocaleString();meta.appendChild(who);meta.appendChild(when);const body=document.createElement('div');body.textContent=m.text;const remove=document.createElement('button');remove.textContent=(window._T && window._T.clear) ? (window._T.clear === 'Clear' ? 'Delete' : (window._T.clear === 'クリア' ? '削除' : '删除')) : '删除';remove.style.marginTop='.6rem';remove.addEventListener('click',()=>{deleteMessage(m.id)});li.appendChild(meta);li.appendChild(body);li.appendChild(remove);list.appendChild(li)})}
