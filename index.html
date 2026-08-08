@@ -44,6 +44,18 @@
     .tag{background:#1e293b;padding:.35rem .8rem;border-radius:999px}
     .footer-note{text-align:right;font-size:.85rem;color:var(--muted);padding:2rem 0;border-top:1px solid rgba(71,85,105,0.08);margin-top:2rem}
     .messages-list{list-style:none;margin-top:1rem;display:flex;flex-direction:column;gap:.8rem;max-width:680px}
+    .music-form{display:flex;flex-direction:column;gap:.6rem;max-width:680px;margin-top:1rem}
+    .music-list{display:flex;flex-direction:column;gap:.9rem;margin-top:1.2rem}
+    .music-card{background:rgba(255,255,255,0.04);padding:1rem;border-radius:.9rem;border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:.6rem}
+    .music-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;font-size:.95rem;color:var(--muted)}
+    .music-title{font-weight:600;color:var(--text)}
+    .music-note{color:var(--text);line-height:1.6}
+    .music-comments{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:.8rem}
+    .music-comment-item{background:rgba(255,255,255,0.03);padding:.75rem;border-radius:.75rem;border:1px solid rgba(255,255,255,0.05)}
+    .music-comment-meta{font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between;gap:.4rem}
+    .music-comment-form{display:flex;flex-direction:column;gap:.55rem}
+    .music-comment-input{min-height:80px}
+    .music-intro{margin-top:0.8rem;color:var(--muted)}
     .message-card{background:rgba(255,255,255,0.02);padding:1rem;border-radius:.8rem;border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column}
     .message-meta{font-size:.85rem;color:var(--muted);margin-bottom:.4rem;display:flex;justify-content:space-between}
     .muted{color:var(--muted)}
@@ -128,12 +140,26 @@
 
       <section id="musicSection" class="placeholder-content hidden-section" aria-hidden="true">
         <h2>🎵 音乐推荐</h2>
-        <div class="tag-list">
-          <span class="tag">❄️ 氛围电子</span>
-          <span class="tag">🌊 后摇</span>
-          <span class="tag">🎹 新古典</span>
-        </div>
-        <p class="muted">本周推荐：Hugar · 《Varða》</p>
+        <p class="muted music-intro">发布你喜欢的歌曲 / 艺人，并在下方讨论交流。</p>
+        <form id="musicForm" class="music-form" aria-label="音乐推荐表单">
+          <label for="musicTitle">曲目</label>
+          <input id="musicTitle" name="title" type="text" placeholder="歌曲名称" required>
+
+          <label for="musicArtist">艺人</label>
+          <input id="musicArtist" name="artist" type="text" placeholder="歌手或乐队" required>
+
+          <label for="musicUrl">链接（可选）</label>
+          <input id="musicUrl" name="url" type="url" placeholder="音乐链接，例如 Spotify、YouTube">
+
+          <label for="musicNote">推荐理由 / 说明</label>
+          <textarea id="musicNote" name="note" rows="3" placeholder="为什么想推荐这首歌？"></textarea>
+
+          <div class="form-actions">
+            <button type="submit" id="submitMusic">发布推荐</button>
+          </div>
+        </form>
+
+        <div id="musicList" class="music-list"></div>
       </section>
 
       <section id="workSection" class="placeholder-content hidden-section" aria-hidden="true">
@@ -189,7 +215,9 @@
         nav: {home: '主页', articles: '文章分享', music: '音乐推荐', work: '工作相关', messages: '私信'},
         theme: '主题', greeting: '✦ 个人主页', title: 'WHY', badge: '玩家', bio: '栖身于冷冽与理性之间，探索交互的边界。',
         labels: {location: '所在地', contact: '联系', status: '状态'},
-        articles_more: '更多文章即将更新...', music_reco: '本周推荐：Hugar · 《Varða》', work_placeholder: '项目与经验将在此处展示。',
+        articles_more: '更多文章即将更新...', music_intro: '发布你喜欢的歌曲 / 艺人，并在下方讨论交流。', work_placeholder: '项目与经验将在此处展示。',
+        music_title_label: '曲目', music_artist_label: '艺人', music_url_label: '链接（可选）', music_note_label: '推荐理由 / 说明',
+        music_title_placeholder: '歌曲名称', music_artist_placeholder: '歌手或乐队', music_url_placeholder: '音乐链接，例如 Spotify、YouTube', music_note_placeholder: '为什么想推荐这首歌？', music_submit: '发布推荐', music_empty: '暂无推荐，快来发布第一条音乐。', music_empty_alert: '请填写曲目和艺人', music_comment_placeholder: '写下你的讨论或推荐理由', music_comment_submit: '发表评论', music_no_comments: '暂无讨论，欢迎留言。', music_discussion_header: '讨论', music_comments_label: '条评论', music_comment_empty_alert: '请填写评论内容',
         msg_heading: '✉️ 私信 / 留言簿', name_label: '姓名', message_label: '留言', send: '发送', clear: '清空留言', no_messages: '暂无留言，快来发表第一个吧！',
         confirm_clear: '确定要删除所有留言吗？', empty_message_alert: '请填写留言内容', saved: '留言已保存。', deleted: '留言已删除。', cleared: '已清空留言'
       },
@@ -197,7 +225,9 @@
         nav: {home: '主頁', articles: '文章分享', music: '音樂推薦', work: '工作相關', messages: '私信'},
         theme: '主題', greeting: '✦ 個人主頁', title: 'WHY', badge: '玩家', bio: '棲身於冷冽與理性之間，探索交互的邊界。',
         labels: {location: '所在地', contact: '聯絡', status: '狀態'},
-        articles_more: '更多文章即將更新...', music_reco: '本週推薦：Hugar · 《Varða》', work_placeholder: '專案與經驗將在此處展示。',
+        articles_more: '更多文章即將更新...', music_intro: '發布你喜歡的歌曲 / 藝人，並在下方討論交流。', work_placeholder: '專案與經驗將在此處展示。',
+        music_title_label: '曲目', music_artist_label: '藝人', music_url_label: '連結（可選）', music_note_label: '推薦理由 / 說明',
+        music_title_placeholder: '歌曲名稱', music_artist_placeholder: '歌手或樂隊', music_url_placeholder: '音樂連結，例如 Spotify、YouTube', music_note_placeholder: '為什麼想推薦這首歌？', music_submit: '發布推薦', music_empty: '暫無推薦，快來發布第一條音樂。', music_empty_alert: '請填寫曲目和藝人', music_comment_placeholder: '寫下你的討論或推薦理由', music_comment_submit: '發表評論', music_no_comments: '暫無討論，歡迎留言。', music_discussion_header: '討論', music_comments_label: '條評論', music_comment_empty_alert: '請填寫評論內容',
         msg_heading: '✉️ 私信 / 留言簿', name_label: '姓名', message_label: '留言', send: '發送', clear: '清空留言', no_messages: '暫無留言，快來發表第一個吧！',
         confirm_clear: '確定要刪除所有留言嗎？', empty_message_alert: '請填寫留言內容', saved: '留言已保存。', deleted: '留言已刪除。', cleared: '已清空留言'
       },
@@ -205,7 +235,9 @@
         nav: {home: 'Home', articles: 'Articles', music: 'Music', work: 'Work', messages: 'Messages'},
         theme: 'Theme', greeting: '✦ Personal', title: 'WHY', badge: 'Player', bio: 'Residing between frost and reason, exploring the edges of interaction.',
         labels: {location: 'Location', contact: 'Contact', status: 'Status'},
-        articles_more: 'More articles coming soon...', music_reco: 'This week: Hugar · Varða', work_placeholder: 'Projects and experience will appear here.',
+        articles_more: 'More articles coming soon...', music_intro: 'Share songs and artists you love, then discuss below.', work_placeholder: 'Projects and experience will appear here.',
+        music_title_label: 'Track', music_artist_label: 'Artist', music_url_label: 'Link (optional)', music_note_label: 'Recommendation notes',
+        music_title_placeholder: 'Song title', music_artist_placeholder: 'Singer or band', music_url_placeholder: 'Music link such as Spotify or YouTube', music_note_placeholder: 'Why are you recommending this track?', music_submit: 'Publish', music_empty: 'No recommendations yet. Be the first to share!', music_empty_alert: 'Please enter a track and artist', music_comment_placeholder: 'Leave a discussion comment', music_comment_submit: 'Post comment', music_no_comments: 'No discussion yet — start the conversation.', music_discussion_header: 'Discussion', music_comments_label: 'comments', music_comment_empty_alert: 'Please enter a comment',
         msg_heading: '✉️ Messages / Guestbook', name_label: 'Name', message_label: 'Message', send: 'Send', clear: 'Clear', no_messages: 'No messages yet — be the first!',
         confirm_clear: 'Are you sure you want to delete all messages?', empty_message_alert: 'Please enter a message', saved: 'Message saved.', deleted: 'Message deleted.', cleared: 'Messages cleared.'
       },
@@ -213,7 +245,9 @@
         nav: {home: 'ホーム', articles: '記事', music: '音楽', work: '仕事', messages: 'メッセージ'},
         theme: 'テーマ', greeting: '✦ 個人ページ', title: 'WHY', badge: 'プレイヤー', bio: '冷たさと理性の間に佇み、インタラクションの境界を探る。',
         labels: {location: '所在地', contact: '連絡', status: '状態'},
-        articles_more: '記事を準備中...', music_reco: '今週のおすすめ：Hugar · Varða', work_placeholder: 'プロジェクトと経験がここに表示されます。',
+        articles_more: '記事を準備中...', music_intro: '好きな曲やアーティストを投稿して、下で交流しましょう。', work_placeholder: 'プロジェクトと経験がここに表示されます。',
+        music_title_label: '曲名', music_artist_label: 'アーティスト', music_url_label: 'リンク（任意）', music_note_label: 'おすすめ理由 / 説明',
+        music_title_placeholder: '曲名', music_artist_placeholder: '歌手またはバンド', music_url_placeholder: 'Spotify、YouTubeなどの音楽リンク', music_note_placeholder: 'おすすめしたい理由は？', music_submit: '投稿する', music_empty: 'まだおすすめはありません。ぜひ最初にシェアしてください！', music_empty_alert: '曲名とアーティストを入力してください', music_comment_placeholder: 'コメントを入力してください', music_comment_submit: 'コメントする', music_no_comments: 'まだ議論はありません。ぜひコメントしてください。', music_discussion_header: 'ディスカッション', music_comments_label: 'コメント', music_comment_empty_alert: 'コメントを入力してください',
         msg_heading: '✉️ メッセージ / ゲストブック', name_label: '名前', message_label: 'メッセージ', send: '送信', clear: 'クリア', no_messages: 'まだメッセージはありません。ぜひ最初の投稿を！',
         confirm_clear: '全てのメッセージを削除してもよろしいですか？', empty_message_alert: 'メッセージを入力してください', saved: 'メッセージを保存しました。', deleted: 'メッセージを削除しました。', cleared: 'メッセージを全て削除しました。'
       }
@@ -248,7 +282,7 @@
       if(labels && labels.length>=3){ labels[0].textContent = dict.labels.location; labels[1].textContent = dict.labels.contact; labels[2].textContent = dict.labels.status; }
       // placeholders and section texts
       const articlesMuted = document.querySelector('#articlesSection .muted'); if(articlesMuted) articlesMuted.textContent = dict.articles_more;
-      const musicMuted = document.querySelector('#musicSection .muted'); if(musicMuted) musicMuted.textContent = dict.music_reco;
+      const musicIntro = document.querySelector('.music-intro'); if(musicIntro) musicIntro.textContent = dict.music_intro;
       const workMuted = document.querySelector('#workSection .muted'); if(workMuted) workMuted.textContent = dict.work_placeholder;
       // messages form labels/placeholders
       const msgHeading = document.querySelector('#messagesSection h2'); if(msgHeading) msgHeading.textContent = dict.msg_heading;
@@ -258,6 +292,15 @@
       const msgInputEl = document.getElementById('guestMessage'); if(msgInputEl) msgInputEl.placeholder = dict.message_label;
       const submitBtn = document.getElementById('submitMessage'); if(submitBtn) submitBtn.textContent = dict.send;
       const clearBtnEl = document.getElementById('clearMessages'); if(clearBtnEl) clearBtnEl.textContent = dict.clear;
+      const musicTitleLabel = document.querySelector('label[for="musicTitle"]'); if(musicTitleLabel) musicTitleLabel.textContent = dict.music_title_label;
+      const musicArtistLabel = document.querySelector('label[for="musicArtist"]'); if(musicArtistLabel) musicArtistLabel.textContent = dict.music_artist_label;
+      const musicUrlLabel = document.querySelector('label[for="musicUrl"]'); if(musicUrlLabel) musicUrlLabel.textContent = dict.music_url_label;
+      const musicNoteLabel = document.querySelector('label[for="musicNote"]'); if(musicNoteLabel) musicNoteLabel.textContent = dict.music_note_label;
+      const musicTitleInput = document.getElementById('musicTitle'); if(musicTitleInput) musicTitleInput.placeholder = dict.music_title_placeholder;
+      const musicArtistInput = document.getElementById('musicArtist'); if(musicArtistInput) musicArtistInput.placeholder = dict.music_artist_placeholder;
+      const musicUrlInput = document.getElementById('musicUrl'); if(musicUrlInput) musicUrlInput.placeholder = dict.music_url_placeholder;
+      const musicNoteInput = document.getElementById('musicNote'); if(musicNoteInput) musicNoteInput.placeholder = dict.music_note_placeholder;
+      const musicSubmitBtn = document.getElementById('submitMusic'); if(musicSubmitBtn) musicSubmitBtn.textContent = dict.music_submit;
       // update messages list text if empty
       const msgs = loadMessages(); if(msgs.length===0){ const l = document.getElementById('messagesList'); if(l) l.innerHTML = `<li class="muted">${dict.no_messages}</li>` }
       // store and set select
@@ -268,23 +311,58 @@
     }
 
     if(langSelect){
-      langSelect.addEventListener('change', (e)=>{ applyLang(e.target.value); });
+      langSelect.addEventListener('change', (e)=>{ applyLang(e.target.value); renderMessages(); renderMusic(); });
     }
     // initialize language
     applyLang(detectLang());
 
     // --- end i18n ---
 
-    const MKEY='guestbookMessages_v1';const form=document.getElementById('messageForm');const nameInput=document.getElementById('guestName');const messageInput=document.getElementById('guestMessage');const list=document.getElementById('messagesList');const live=document.getElementById('messagesLive');const clearBtn=document.getElementById('clearMessages');
+    const MKEY='guestbookMessages_v1';
+    const MUSIC_KEY='musicRecommendations_v1';
+    const form=document.getElementById('messageForm');
+    const nameInput=document.getElementById('guestName');
+    const messageInput=document.getElementById('guestMessage');
+    const list=document.getElementById('messagesList');
+    const live=document.getElementById('messagesLive');
+    const clearBtn=document.getElementById('clearMessages');
+    const musicForm=document.getElementById('musicForm');
+    const musicTitle=document.getElementById('musicTitle');
+    const musicArtist=document.getElementById('musicArtist');
+    const musicUrl=document.getElementById('musicUrl');
+    const musicNote=document.getElementById('musicNote');
+    const musicListEl=document.getElementById('musicList');
+
     function loadMessages(){try{return JSON.parse(localStorage.getItem(MKEY)||'[]')}catch(e){return[]}}
     function saveMessages(arr){localStorage.setItem(MKEY,JSON.stringify(arr))}
-    function renderMessages(){list.innerHTML='';const msgs=loadMessages().slice().reverse();if(msgs.length===0){const emptyText=(window._T && window._T.no_messages) || '暂无留言，快来发表第一个吧！';list.innerHTML=`<li class="muted">${emptyText}</li>`;return}msgs.forEach(m=>{const li=document.createElement('li');li.className='message-card';const meta=document.createElement('div');meta.className='message-meta';const who=document.createElement('span');who.textContent=`${m.name||((window._T && window._T.name_label) || '匿名')}`;const when=document.createElement('span');when.textContent=new Date(m.time).toLocaleString();meta.appendChild(who);meta.appendChild(when);const body=document.createElement('div');body.textContent=m.text;const remove=document.createElement('button');remove.textContent=(window._T && window._T.clear) ? (window._T.clear === 'Clear' ? 'Delete' : '删除') : '删除';remove.style.marginTop='.6rem';remove.addEventListener('click',()=>{deleteMessage(m.id)});li.appendChild(meta);li.appendChild(body);li.appendChild(remove);list.appendChild(li)})}
+    function renderMessages(){list.innerHTML='';const msgs=loadMessages().slice().reverse();if(msgs.length===0){const emptyText=(window._T && window._T.no_messages) || '暂无留言，快来发表第一个吧！';list.innerHTML=`<li class="muted">${emptyText}</li>`;return}msgs.forEach(m=>{const li=document.createElement('li');li.className='message-card';const meta=document.createElement('div');meta.className='message-meta';const who=document.createElement('span');who.textContent=`${m.name||((window._T && window._T.name_label) || '匿名')}`;const when=document.createElement('span');when.textContent=new Date(m.time).toLocaleString();meta.appendChild(who);meta.appendChild(when);const body=document.createElement('div');body.textContent=m.text;const remove=document.createElement('button');remove.textContent=(window._T && window._T.clear) ? (window._T.clear === 'Clear' ? 'Delete' : (window._T.clear === 'クリア' ? '削除' : '删除')) : '删除';remove.style.marginTop='.6rem';remove.addEventListener('click',()=>{deleteMessage(m.id)});li.appendChild(meta);li.appendChild(body);li.appendChild(remove);list.appendChild(li)})}
     function addMessage(name,text){const arr=loadMessages();const entry={id:Date.now(),name:name.trim()||((window._T && window._T.name_label) || '匿名'),text:text.trim(),time:Date.now()};arr.push(entry);saveMessages(arr);renderMessages();live.textContent=(window._T && window._T.saved) || '留言已保存。'}
     function deleteMessage(id){let arr=loadMessages();arr=arr.filter(x=>x.id!==id);saveMessages(arr);renderMessages();live.textContent=(window._T && window._T.deleted) || '留言已删除。'}
     function clearAll(){const conf=(window._T && window._T.confirm_clear) || '确定要删除所有留言吗？';if(confirm(conf)){localStorage.removeItem(MKEY);renderMessages();live.textContent=(window._T && window._T.cleared) || '已清空留言'}}
+
+    function loadMusic(){try{return JSON.parse(localStorage.getItem(MUSIC_KEY)||'[]')}catch(e){return[]}}
+    function saveMusic(arr){localStorage.setItem(MUSIC_KEY,JSON.stringify(arr))}
+    function renderMusic(){if(!musicListEl)return;musicListEl.innerHTML='';const recs=loadMusic().slice().reverse();if(recs.length===0){const emptyText=(window._T && window._T.music_empty) || '暂无推荐，快来发布第一条音乐。';const emptyEl=document.createElement('div');emptyEl.className='muted';emptyEl.textContent=emptyText;musicListEl.appendChild(emptyEl);return}recs.forEach(item=>{const card=document.createElement('div');card.className='music-card';const top=document.createElement('div');top.className='music-meta';const track=document.createElement('span');track.className='music-title';track.textContent=item.title||((window._T && window._T.music_title_label) || '曲目');const artist=document.createElement('span');artist.textContent=item.artist||((window._T && window._T.music_artist_label) || '艺人');top.appendChild(track);top.appendChild(artist);const note=document.createElement('div');note.className='music-note';note.textContent=item.note || '';
+      if(item.url){const link=document.createElement('a');link.href=item.url;link.target='_blank';link.rel='noopener';link.textContent=(window._T && window._T.music_url_label) || '链接';link.style.display='inline-block';link.style.color='var(--accent)';link.style.textDecoration='none';link.style.marginTop='.35rem';note.appendChild(document.createElement('br'));note.appendChild(link)}
+      const footer=document.createElement('div');footer.className='music-meta';footer.style.justifyContent='space-between';const time=document.createElement('span');time.textContent=new Date(item.time).toLocaleString();const remove=document.createElement('button');remove.textContent=(window._T && window._T.clear) ? (window._T.clear === 'Clear' ? 'Delete' : (window._T.clear === 'クリア' ? '削除' : '删除')) : '删除';remove.style.marginTop='.4rem';remove.addEventListener('click',()=>{deleteMusic(item.id)});footer.appendChild(time);footer.appendChild(remove);card.appendChild(top);card.appendChild(note);card.appendChild(footer);
+      const commentsBlock=document.createElement('div');commentsBlock.className='music-comments';
+      const commentsHeader=document.createElement('div');commentsHeader.className='music-meta';const commentsTitle=document.createElement('span');commentsTitle.textContent=(window._T && window._T.music_discussion_header) || 'Discussion';commentsHeader.appendChild(commentsTitle);const commentsCount=document.createElement('span');commentsCount.textContent=`${(item.comments||[]).length} ${(window._T && window._T.comments_label) || 'comments'}`;commentsHeader.appendChild(commentsCount);commentsBlock.appendChild(commentsHeader);
+      const commentList=document.createElement('div');commentList.className='music-comment-list';const comments=(item.comments||[]).slice().reverse();if(comments.length===0){const emptyComments=document.createElement('div');emptyComments.className='muted';emptyComments.textContent=(window._T && window._T.music_no_comments) || '暂无讨论，欢迎留言。';commentList.appendChild(emptyComments);}else{comments.forEach(c=>{const commentItem=document.createElement('div');commentItem.className='music-comment-item';const meta=document.createElement('div');meta.className='music-comment-meta';const commentTime=document.createElement('span');commentTime.textContent=new Date(c.time).toLocaleString();meta.appendChild(commentTime);const commentBody=document.createElement('div');commentBody.textContent=c.text;commentItem.appendChild(meta);commentItem.appendChild(commentBody);commentList.appendChild(commentItem);})}
+      commentsBlock.appendChild(commentList);
+      const commentForm=document.createElement('form');commentForm.className='music-comment-form';commentForm.addEventListener('submit',e=>{e.preventDefault();const textarea=e.target.querySelector('textarea');const value=textarea.value;if(!value.trim()){alert((window._T && window._T.music_comment_empty_alert) || '请填写评论内容');return;}addMusicComment(item.id,value);textarea.value=''});
+      const commentInput=document.createElement('textarea');commentInput.className='music-comment-input';commentInput.placeholder=(window._T && window._T.music_comment_placeholder) || '写下你的讨论或推荐理由';commentInput.rows=2;commentForm.appendChild(commentInput);
+      const commentButton=document.createElement('button');commentButton.type='submit';commentButton.textContent=(window._T && window._T.music_comment_submit) || '发表评论';commentForm.appendChild(commentButton);
+      commentsBlock.appendChild(commentForm);
+      card.appendChild(commentsBlock);
+      musicListEl.appendChild(card)})}
+    function addMusic(title,artist,url,note){const arr=loadMusic();const entry={id:Date.now(),title:title.trim(),artist:artist.trim(),url:url.trim(),note:note.trim(),time:Date.now(),comments:[]};arr.push(entry);saveMusic(arr);renderMusic();}
+    function deleteMusic(id){let arr=loadMusic();arr=arr.filter(x=>x.id!==id);saveMusic(arr);renderMusic();}
+    function addMusicComment(trackId,text){const arr=loadMusic();const item=arr.find(x=>x.id===trackId);if(!item)return;item.comments=item.comments||[];item.comments.push({id:Date.now(),text:text.trim(),time:Date.now()});saveMusic(arr);renderMusic();}
+
     if(form){form.addEventListener('submit',e=>{e.preventDefault();const n=nameInput.value;const t=messageInput.value;if(!t.trim()){alert((window._T && window._T.empty_message_alert) || '请填写留言内容');return}addMessage(n,t);form.reset()})}
     if(clearBtn)clearBtn.addEventListener('click',clearAll);
-    renderMessages();const initial=location.hash.replace('#','')||'home';navigate(initial,false);
+    if(musicForm){musicForm.addEventListener('submit',e=>{e.preventDefault();const title=musicTitle.value;const artist=musicArtist.value;const url=musicUrl.value;const note=musicNote.value;if(!title.trim()||!artist.trim()){alert((window._T && window._T.music_empty_alert) || '请填写曲目和艺人');return}addMusic(title,artist,url,note);musicForm.reset()})}
+    renderMessages();renderMusic();const initial=location.hash.replace('#','')||'home';navigate(initial,false);
   })();
   </script>
 </body>
