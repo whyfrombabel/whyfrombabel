@@ -35,15 +35,15 @@
     .name{font-size:2.4rem;margin-bottom:.4rem;color:var(--text)}
     .title-badge{display:inline-block;background:#1e293b;color:#b9c7dd;padding:.25rem .8rem;border-radius:999px;font-size:.9rem;margin:0.4rem 0 1rem}
     .bio{font-size:1.05rem;color:var(--muted);margin:1rem 0 1.2rem;border-left:3px solid #475569;padding-left:1rem}
-    .photo-panel{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0 0;padding:1rem;border:1px solid rgba(148,163,184,0.12);border-radius:1rem;background:rgba(15,23,42,.68)}
-    .photo-preview{flex:1 1 180px;min-height:160px;border-radius:1rem;background:linear-gradient(135deg,rgba(71,85,105,.35),rgba(15,23,42,.95));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem;text-align:center;background-size:cover;background-position:center}
-    .photo-preview.has-photo{color:transparent}
-    .photo-upload{flex:1 1 220px;display:flex;flex-direction:column;gap:.65rem}
-    .file-input-label{font-size:.92rem;color:var(--text)}
-    #photoInput{padding:.6rem .8rem;border-radius:.6rem;border:1px solid rgba(71,85,105,0.15);background:rgba(255,255,255,.05);color:var(--text)}
+    .photo-panel{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0 0;padding:0;border-radius:1.2rem}
+    .photo-preview{position:relative;flex:1 1 260px;min-height:180px;border:2px dashed rgba(148,163,184,0.55);border-radius:1.2rem;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:rgba(226,232,240,0.65);font-size:2rem;text-align:center;background-size:cover;background-position:center;transition:border-color .22s,background .22s}
+    .photo-preview::after{content:'+';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.6rem;color:rgba(226,232,240,0.45);pointer-events:none}
+    .photo-preview.has-photo::after{content:''}
+    .photo-preview.has-photo{border-color:rgba(71,85,105,0.25);color:transparent}
+    .photo-upload{display:flex;flex-direction:column;gap:.65rem;align-items:flex-start}
+    #photoInput{display:none}
     #removePhoto{display:none;align-self:flex-start;padding:.55rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.04);color:var(--text);cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
     #removePhoto:hover{transform:translateY(-1px);background:rgba(255,255,255,0.08)}
-    .photo-note{font-size:.82rem;color:var(--muted);line-height:1.4;margin-top:.2rem}
     .details-grid{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1rem;border-top:1px solid rgba(148,163,184,0.12);padding-top:1rem}
     .detail-item{display:flex;flex-direction:column}
     .detail-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -129,12 +129,10 @@
           <p class="bio">栖身于冷冽与理性之间，探索交互的边界。</p>
 
           <div class="photo-panel">
-            <div id="photoPreview" class="photo-preview" aria-label="个人照片预览">个人照片</div>
+            <div id="photoPreview" class="photo-preview" aria-label="个人照片预览"></div>
             <div class="photo-upload">
-              <label id="photoLabel" for="photoInput" class="file-input-label">上传个人图片（仅本人）</label>
               <input id="photoInput" type="file" accept="image/*">
               <button type="button" id="removePhoto">删除照片</button>
-              <div id="photoNote" class="photo-note">本图片仅保存在当前浏览器，不会同步给他人。</div>
             </div>
           </div>
 
@@ -360,11 +358,11 @@
     const MKEY='guestbookMessages_v1';
     const MUSIC_KEY='musicRecommendations_v1';
     const PHOTO_KEY='personalPhoto_v1';
+    const PHOTO_PASSWORD='20080405WHY';
     const form=document.getElementById('messageForm');
     const photoInput=document.getElementById('photoInput');
     const photoPreview=document.getElementById('photoPreview');
     const removePhotoButton=document.getElementById('removePhoto');
-    const photoNoteElement=document.getElementById('photoNote');
     const nameInput=document.getElementById('guestName');
     const messageInput=document.getElementById('guestMessage');
     const list=document.getElementById('messagesList');
@@ -379,7 +377,8 @@
 
     function loadPhoto(){return localStorage.getItem(PHOTO_KEY)||''}
     function savePhoto(data){if(data) localStorage.setItem(PHOTO_KEY,data);else localStorage.removeItem(PHOTO_KEY)}
-    function renderPhoto(){if(!photoPreview)return;const data=loadPhoto();if(data){photoPreview.style.backgroundImage=`url(${data})`;photoPreview.textContent='';photoPreview.classList.add('has-photo');if(removePhotoButton)removePhotoButton.style.display='inline-flex'}else{photoPreview.style.backgroundImage='none';photoPreview.textContent=(window._T && window._T.photo_empty) || '个人照片';photoPreview.classList.remove('has-photo');if(removePhotoButton)removePhotoButton.style.display='none'}}
+    function renderPhoto(){if(!photoPreview)return;const data=loadPhoto();if(data){photoPreview.style.backgroundImage=`url(${data})`;photoPreview.classList.add('has-photo');if(removePhotoButton)removePhotoButton.style.display='inline-flex'}else{photoPreview.style.backgroundImage='none';photoPreview.classList.remove('has-photo');if(removePhotoButton)removePhotoButton.style.display='none'}}
+    if(photoPreview){photoPreview.addEventListener('click',()=>{const current=loadPhoto();const promptText=(window._T && window._T.photo_prompt) || '请输入上传密码：';const password=prompt(promptText);if(password===null)return;if(password!==PHOTO_PASSWORD){alert((window._T && window._T.photo_wrong_alert) || '密码错误，无法上传。');return;} if(photoInput)photoInput.click();})}
     if(photoInput){photoInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return; if(!file.type.startsWith('image/')){alert((window._T && window._T.photo_type_alert) || '请选择图片文件。');photoInput.value='';return;} if(file.size>2500000){alert((window._T && window._T.photo_size_alert) || '图片大小请小于 2.5MB。');photoInput.value='';return;} const reader=new FileReader();reader.onload=()=>{savePhoto(reader.result);renderPhoto()};reader.readAsDataURL(file)});}
     if(removePhotoButton){removePhotoButton.addEventListener('click',()=>{savePhoto('');if(photoInput)photoInput.value='';renderPhoto()})}
     renderPhoto();
