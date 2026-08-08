@@ -48,10 +48,14 @@
     .circle-core{position:relative;width:160px;height:160px;border-radius:50%;border:1px solid rgba(148,163,184,0.3);background:rgba(255,255,255,0.08);box-shadow:0 24px 64px rgba(15,23,42,0.18),inset 0 0 0 1px rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .35s ease,box-shadow .35s ease,background .35s ease}
     .circle-core:hover{transform:scale(1.03);box-shadow:0 30px 72px rgba(56,189,248,0.18),0 0 0 1px rgba(56,189,248,0.16)}
     .circle-core::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 12px rgba(56,189,248,0.08);pointer-events:none}
-    .circle-items{position:absolute;inset:0;pointer-events:none;visibility:hidden}
-    .circle-hub.open .circle-items{pointer-events:auto;visibility:visible}
-    .circle-item{position:absolute;top:50%;left:50%;width:120px;height:120px;border-radius:50%;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.9);color:var(--text);display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;font-size:.95rem;font-weight:600;line-height:1.2;cursor:pointer;transition:transform .35s ease,opacity .35s ease,box-shadow .35s ease;opacity:0;transform:translate(-50%,-50%) scale(0);pointer-events:none;backdrop-filter:blur(16px)}
+    .circle-items{position:absolute;inset:0;pointer-events:none;visibility:hidden;opacity:0;transform:scale(0.92);transition:visibility 0s .35s,opacity .35s ease,transform .35s ease}
+    .circle-hub.open .circle-items{pointer-events:auto;visibility:visible;opacity:1;transform:scale(1);transition-delay:0s}
+    .circle-item{position:absolute;top:50%;left:50%;width:120px;height:120px;border-radius:50%;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.9);color:var(--text);display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;font-size:.95rem;font-weight:600;line-height:1.2;cursor:pointer;transition:transform .35s cubic-bezier(0.2,1,0.3,1),opacity .35s ease,box-shadow .35s ease;opacity:0;transform:translate(-50%,-50%) scale(0);pointer-events:none;backdrop-filter:blur(16px)}
     .circle-hub.open .circle-item{opacity:1;transform:translate(calc(-50% + var(--tx,0)), calc(-50% + var(--ty,0))) scale(1);pointer-events:auto}
+    .circle-hub.open .circle-core{transform:scale(1.04);box-shadow:0 30px 80px rgba(56,189,248,0.22),0 0 0 1px rgba(56,189,248,0.18)}
+    .photo-panel{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0 0;padding:0;border-radius:1.2rem;opacity:1;transition:opacity .35s ease,transform .35s ease,max-height .35s ease}
+    .photo-panel.collapsed-photo{opacity:0;pointer-events:none;transform:translateY(16px);max-height:0;overflow:hidden}
+    .photo-panel.visible-photo{opacity:1;pointer-events:auto;transform:translateY(0);max-height:800px}
     .circle-item:hover{box-shadow:0 22px 40px rgba(56,189,248,0.18);transform:translate(calc(-50% + var(--tx,0)), calc(-50% + var(--ty,0))) scale(1.03)}
     .circle-item[data-section="articles"]{--tx:0;--ty:-170px}
     .circle-item[data-section="music"]{--tx:130px;--ty:-30px}
@@ -162,7 +166,7 @@
             </div>
           </div>
 
-          <div class="photo-panel">
+          <div class="photo-panel collapsed-photo">
             <div id="photoPreview" class="photo-preview" aria-label="个人照片预览"></div>
             <div class="photo-upload">
               <input id="photoInput" type="file" accept="image/*">
@@ -262,9 +266,15 @@
     const circleHub=document.getElementById('circleHub');
     const circleItems=document.querySelectorAll('.circle-item');
     const exitButton=document.getElementById('exitSection');
+    const photoPanel=document.querySelector('.photo-panel');
+    let lastMouseY=null;
+    let initialMouseY=null;
+    let photoAreaRevealed=false;
+    function revealPhotoPanel(){if(photoPanel && !photoAreaRevealed){photoPanel.classList.remove('collapsed-photo');photoPanel.classList.add('visible-photo');photoAreaRevealed=true;}}
+    if(photoPanel){photoPanel.classList.remove('visible-photo');photoPanel.classList.add('collapsed-photo')}
     function hideAll(){sections.forEach(s=>{const el=document.getElementById(s+'Section');if(el){el.classList.add('hidden-section');el.setAttribute('aria-hidden','true');el.classList.remove('show-active');el.classList.add('section-exit')}})}
     function show(section){hideAll();const el=document.getElementById(section+'Section');if(el){el.classList.remove('hidden-section');el.classList.add('visible-section');requestAnimationFrame(()=>el.classList.add('show-active'));el.setAttribute('aria-hidden','false');el.classList.remove('section-exit')}menuLinks.forEach(l=>l.classList.toggle('home-link-active',l.dataset.section===section));
-      circleHub.classList.toggle('open', section==='home');
+      if(circleHub)circleHub.classList.remove('open');
       if(exitButton){if(section==='home'){exitButton.classList.remove('visible');exitButton.classList.add('hide')}else{exitButton.classList.add('visible');exitButton.classList.remove('hide')}}
     }
     function navigate(section,push=true){if(!sections.includes(section))section='home';show(section);if(push)history.pushState({section},'',section==='home'?'/':`#${section}`)}
@@ -280,8 +290,12 @@
     (function initTheme(){const saved=localStorage.getItem(THEME_KEY);if(saved)setTheme(saved);else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)setTheme('light');else setTheme('dark')})();
 
     const cursorEl = document.createElement('div');cursorEl.id='customCursor';document.body.appendChild(cursorEl);
-    document.addEventListener('mousemove',e=>{const x=Math.round((e.clientX/window.innerWidth)*100);const y=Math.round((e.clientY/window.innerHeight)*100);document.body.style.setProperty('--mouse-x', x+'%');document.body.style.setProperty('--mouse-y', y+'%');cursorEl.style.left=`${e.clientX}px`;cursorEl.style.top=`${e.clientY}px`;document.body.classList.add('mouse-active')});
-    document.addEventListener('mouseleave',()=>{document.body.style.setProperty('--mouse-x','50%');document.body.style.setProperty('--mouse-y','50%');document.body.classList.remove('mouse-active')});
+    document.addEventListener('mousemove',e=>{const x=Math.round((e.clientX/window.innerWidth)*100);const y=Math.round((e.clientY/window.innerHeight)*100);document.body.style.setProperty('--mouse-x', x+'%');document.body.style.setProperty('--mouse-y', y+'%');cursorEl.style.left=`${e.clientX}px`;cursorEl.style.top=`${e.clientY}px`;document.body.classList.add('mouse-active');
+      if(initialMouseY===null) initialMouseY=e.clientY;
+      if(!photoAreaRevealed && e.clientY > initialMouseY + 24) revealPhotoPanel();
+      lastMouseY=e.clientY;
+    });
+    document.addEventListener('mouseleave',()=>{initialMouseY=null;document.body.style.setProperty('--mouse-x','50%');document.body.style.setProperty('--mouse-y','50%');document.body.classList.remove('mouse-active')});
 
     // --- i18n (简中 / 繁中 / English / 日本語) ---
     const LANG_KEY = 'site-lang';
