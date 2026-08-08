@@ -23,10 +23,11 @@
     .avatar-link{display:flex;align-items:center;justify-content:center;margin-right:auto}
     .avatar-img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #475569;background:#1e293b;box-shadow:0 4px 12px rgba(0,0,0,.35);cursor:pointer}
     .nav-menu{display:flex;align-items:center;gap:1.2rem}
-    .nav-item{color:var(--muted);text-decoration:none;font-size:1rem;font-weight:500;padding:.3rem .4rem;border-radius:6px;transition:color .15s,background .15s}
-    .nav-item:hover,.nav-item:focus{color:var(--text);outline:none;background:rgba(255,255,255,0.02)}
+    .nav-item{color:var(--muted);text-decoration:none;font-size:1rem;font-weight:500;padding:.3rem .4rem;border-radius:6px;transition:color .15s,background .15s,transform .2s}
+    .nav-item:hover,.nav-item:focus{color:var(--text);outline:none;background:rgba(255,255,255,0.02);transform:translateY(-1px)}
     .home-link-active{color:var(--text);font-weight:600}
-    .info-card{background:var(--card);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(71,85,105,0.2);border-radius:1.2rem;padding:2rem;box-shadow:0 18px 30px -8px rgba(0,0,0,.45);max-width:680px}
+    .info-card{background:var(--card);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(71,85,105,0.2);border-radius:1.2rem;padding:2rem;box-shadow:0 18px 30px -8px rgba(0,0,0,.45);max-width:680px;transition:transform .25s ease,box-shadow .25s ease}
+    .info-card:hover{transform:translateY(-3px);box-shadow:0 24px 36px rgba(0,0,0,.18)}
     .greeting{font-size:.95rem;color:var(--muted);margin-bottom:.6rem}
     .name{font-size:2.4rem;margin-bottom:.4rem;color:var(--text)}
     .title-badge{display:inline-block;background:#1e293b;color:#b9c7dd;padding:.25rem .8rem;border-radius:999px;font-size:.9rem;margin:0.4rem 0 1rem}
@@ -38,8 +39,10 @@
     .social-links{margin-top:1.2rem;display:flex;gap:1rem}
     .social-icon{color:var(--muted);text-decoration:none;font-size:.95rem}
     .social-icon:hover{color:var(--text)}
-    .placeholder-content{background:var(--card);backdrop-filter:blur(6px);border-radius:1rem;padding:2rem;color:var(--muted);border:1px solid rgba(51,65,85,0.08);max-width:680px}
+    .placeholder-content{background:var(--card);backdrop-filter:blur(6px);border-radius:1rem;padding:2rem;color:var(--muted);border:1px solid rgba(51,65,85,0.08);max-width:680px;transition:transform .28s ease,box-shadow .28s ease,background .28s ease}
     .hidden-section{display:none}
+    .visible-section{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease}
+    .visible-section.show-active{opacity:1;transform:translateY(0)}
     .tag-list{display:flex;gap:.6rem}
     .tag{background:#1e293b;padding:.35rem .8rem;border-radius:999px}
     .footer-note{text-align:right;font-size:.85rem;color:var(--muted);padding:2rem 0;border-top:1px solid rgba(71,85,105,0.08);margin-top:2rem}
@@ -51,20 +54,23 @@
     .music-title{font-weight:600;color:var(--text)}
     .music-note{color:var(--text);line-height:1.6}
     .music-comments{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:.8rem}
-    .music-comment-item{background:rgba(255,255,255,0.03);padding:.75rem;border-radius:.75rem;border:1px solid rgba(255,255,255,0.05)}
+    .music-comment-item{background:rgba(255,255,255,0.03);padding:.75rem;border-radius:.75rem;border:1px solid rgba(255,255,255,0.05);transition:transform .2s,box-shadow .2s}
     .music-comment-meta{font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between;gap:.4rem}
     .music-comment-form{display:flex;flex-direction:column;gap:.55rem}
-    .music-comment-input{min-height:80px}
+    .music-comment-input{min-height:80px;transition:border-color .25s,box-shadow .25s}
     .music-intro{margin-top:0.8rem;color:var(--muted)}
-    .message-card{background:rgba(255,255,255,0.02);padding:1rem;border-radius:.8rem;border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column}
+    .message-card{background:rgba(255,255,255,0.02);padding:1rem;border-radius:.8rem;border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+    .message-card:hover,.music-comment-item:hover,.placeholder-content:hover{transform:translateY(-3px);box-shadow:0 18px 32px rgba(0,0,0,.12)}
     .message-meta{font-size:.85rem;color:var(--muted);margin-bottom:.4rem;display:flex;justify-content:space-between}
     .muted{color:var(--muted)}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     form{display:flex;flex-direction:column;gap:.6rem;max-width:680px}
     label{font-size:.9rem;color:var(--muted)}
-    input,textarea{padding:.6rem .8rem;border-radius:.6rem;border:1px solid rgba(71,85,105,0.12);background:transparent;color:var(--text);resize:vertical}
+    input,textarea{padding:.6rem .8rem;border-radius:.6rem;border:1px solid rgba(71,85,105,0.12);background:transparent;color:var(--text);resize:vertical;transition:border-color .22s,box-shadow .22s,transform .22s}
+    input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(148,163,184,0.12);outline:none;transform:translateY(-1px)}
     .form-actions{display:flex;gap:.6rem;margin-top:.4rem}
-    button{padding:.55rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
+    button{padding:.55rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
+    button:hover{transform:translateY(-2px);background:rgba(255,255,255,0.06);box-shadow:0 10px 20px rgba(0,0,0,.14)}
     @media (max-width:600px){.avatar-img{width:40px;height:40px}.nav-menu{gap:.6rem}.info-card{padding:1.4rem}}
     /* language selector */
     .lang-wrap{display:flex;align-items:center;margin-left:1rem}
@@ -103,7 +109,7 @@
     </header>
 
     <main id="contentArea">
-      <section id="homeSection" class="home-section" aria-labelledby="homeTitle">
+      <section id="homeSection" class="home-section visible-section" aria-labelledby="homeTitle">
         <div class="info-card">
           <div class="greeting">✦ 个人主页</div>
           <h1 id="homeTitle" class="name">WHY</h1>
@@ -133,12 +139,12 @@
         </div>
       </section>
 
-      <section id="articlesSection" class="placeholder-content hidden-section" aria-hidden="true">
+      <section id="articlesSection" class="placeholder-content hidden-section visible-section" aria-hidden="true">
         <h2>📄 文章分享</h2>
         <p class="muted">更多文章即将更新...</p>
       </section>
 
-      <section id="musicSection" class="placeholder-content hidden-section" aria-hidden="true">
+      <section id="musicSection" class="placeholder-content hidden-section visible-section" aria-hidden="true">
         <h2>🎵 音乐推荐</h2>
         <p class="muted music-intro">发布你喜欢的歌曲 / 艺人，并在下方讨论交流。</p>
         <form id="musicForm" class="music-form" aria-label="音乐推荐表单">
@@ -162,12 +168,12 @@
         <div id="musicList" class="music-list"></div>
       </section>
 
-      <section id="workSection" class="placeholder-content hidden-section" aria-hidden="true">
+      <section id="workSection" class="placeholder-content hidden-section visible-section" aria-hidden="true">
         <h2>💼 工作相关</h2>
         <p class="muted">项目与经验将在此处展示。</p>
       </section>
 
-      <section id="messagesSection" class="placeholder-content hidden-section" aria-hidden="true">
+      <section id="messagesSection" class="placeholder-content hidden-section visible-section" aria-hidden="true">
         <h2>✉️ 私信 / 留言簿</h2>
         <form id="messageForm" aria-label="留言表单">
           <label for="guestName">姓名</label>
@@ -197,7 +203,7 @@
     const menuLinks=document.querySelectorAll('.nav-item');
     const avatar=document.getElementById('homeAvatarLink');
     function hideAll(){sections.forEach(s=>{const el=document.getElementById(s+'Section');if(el){el.classList.add('hidden-section');el.setAttribute('aria-hidden','true')}})}
-    function show(section){hideAll();const el=document.getElementById(section+'Section');if(el){el.classList.remove('hidden-section');el.setAttribute('aria-hidden','false')}menuLinks.forEach(l=>l.classList.toggle('home-link-active',l.dataset.section===section))}
+    function show(section){hideAll();const el=document.getElementById(section+'Section');if(el){el.classList.remove('hidden-section');el.classList.add('visible-section');requestAnimationFrame(()=>el.classList.add('show-active'));el.setAttribute('aria-hidden','false')}menuLinks.forEach(l=>l.classList.toggle('home-link-active',l.dataset.section===section))}
     function navigate(section,push=true){if(!sections.includes(section))section='home';show(section);if(push)history.pushState({section},'',section==='home'?'/':`#${section}`)}
     menuLinks.forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const sec=link.dataset.section||'home';navigate(sec)})});
     avatar.addEventListener('click',e=>{e.preventDefault();navigate('home')});
@@ -365,5 +371,3 @@
     renderMessages();renderMusic();const initial=location.hash.replace('#','')||'home';navigate(initial,false);
   })();
   </script>
-</body>
-</html>
